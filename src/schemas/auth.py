@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pydantic import EmailStr
 
 from src.schemas.base import BaseSchema
