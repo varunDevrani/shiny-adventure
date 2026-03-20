@@ -17,6 +17,13 @@ def startup():
 register_exception_handlers(app)
 
 
+
+@app.get("/")
+def root():
+	return {
+		"message": "FUCK YOU"
+	}
+
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(evening_router, prefix="/api/v1")
 
