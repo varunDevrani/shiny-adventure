@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from fastapi.routing import RequestValidationError
+from fastapi.exceptions import RequestValidationError
 
 from src.errors.codes import ErrorCode
 from src.errors.domain_exception import DomainException

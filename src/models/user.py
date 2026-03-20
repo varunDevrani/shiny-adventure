@@ -15,7 +15,11 @@ class User(IDMixin, TimestampMixin, Base):
 
     last_name: Mapped[Union[str, None]] = mapped_column()
 
-    email: Mapped[str] = mapped_column()
+    email: Mapped[str] = mapped_column(
+   		unique=True
+    )
+    
+    password_hash: Mapped[str] = mapped_column()
 
     profile_pic_url: Mapped[Union[str, None]] = mapped_column()
 
