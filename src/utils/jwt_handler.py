@@ -1,15 +1,11 @@
-
-
-
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from uuid import UUID
 
+import jwt
 from pydantic import BaseModel
 
 from src.core.config import settings
-import jwt
-
 from src.errors.codes import ErrorCode
 from src.errors.domain_exception import DomainException
 
@@ -20,7 +16,7 @@ class AccessTokenPayload(BaseModel):
 	user_id: UUID
 	iat: int
 	exp: int
-	
+
 
 def create_access_token(user_id: UUID) -> str:
 	current_time = datetime.now(timezone.utc)
@@ -31,7 +27,7 @@ def create_access_token(user_id: UUID) -> str:
 		iat=int(current_time.timestamp()),
 		exp=int(expire_time.timestamp())
 	)
-	
+
 	return jwt.encode(payload.model_dump(mode="json"), settings.JWT_SECRET_KEY, ALGORITHM)
 
 
@@ -50,10 +46,5 @@ def decode_access_token(token: str) -> AccessTokenPayload:
 			message="Token is invalid",
 			error_code=ErrorCode.TOKEN_INVALID
 		)
-	
+
 	return AccessTokenPayload(**raw)
-
-
-
-
-

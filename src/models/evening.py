@@ -11,6 +11,8 @@ from src.models.mixins.timestamp import TimestampMixin
 
 
 class Evening(IDMixin, TimestampMixin, Base):
+	__tablename__ = "evenings"
+	
 	user_id: Mapped[uuid.UUID] = mapped_column(
 		UUID(as_uuid=True)
 	)

@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Union
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -15,9 +16,16 @@ http_bearer = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-	credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+	credentials: Union[HTTPAuthorizationCredentials, None] = Depends(http_bearer),
 	db: Session = Depends(get_db)
 ) -> User:
+	
+	if credentials is None:
+		raise DomainException(
+			status_code=HTTPStatus.UNAUTHORIZED,
+			message="Invalid authentication credentials",
+			error_code=ErrorCode.UNAUTHORIZED
+		)
 	
 	payload = decode_access_token(credentials.credentials)
 	
