@@ -1,4 +1,3 @@
-from http import HTTPStatus
 from typing import Union
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -6,8 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
 
 from src.dependencies.database import get_db
-from src.errors.codes import ErrorCode
-from src.errors.domain_exception import DomainException
+from src.errors.app_exception import AuthenticationError
 from src.models.user import User
 from src.utils.jwt_handler import decode_access_token
 
@@ -21,10 +19,8 @@ def get_current_user(
 ) -> User:
 	
 	if credentials is None:
-		raise DomainException(
-			status_code=HTTPStatus.UNAUTHORIZED,
-			message="Invalid authentication credentials",
-			error_code=ErrorCode.UNAUTHORIZED
+		raise AuthenticationError(
+			message="Authentication credentials were not provided.",
 		)
 	
 	payload = decode_access_token(credentials.credentials)
@@ -32,17 +28,15 @@ def get_current_user(
 	stmt = select(User).where(User.id == payload.user_id)
 	user = db.scalar(stmt)
 	if user is None:
-		raise DomainException(
-			status_code=HTTPStatus.UNAUTHORIZED,
-			message="User no longer exists",
-			error_code=ErrorCode.USER_NOT_FOUND
+		raise AuthenticationError(
+			message="User associated with this token does not exist.",
+			error_code="AUTH_USER_NOT_FOUND"
 		)
 	
 	if user.deleted_at:
-		raise DomainException(
-			status_code=HTTPStatus.UNAUTHORIZED,
-			message="User not active",
-			error_code=ErrorCode.USER_INACTIVE
+		raise AuthenticationError(
+			message="User account is deactivated.",
+			error_code="AUTH_USER_DEACTIVATED"
 		)
 	
 	return user

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from src.core.config import settings
 from src.errors.codes import ErrorCode
-from src.errors.domain_exception import DomainException
+from src.errors.app_exception import AuthenticationError
 
 ALGORITHM = "HS256"
 
@@ -35,16 +35,12 @@ def decode_access_token(token: str) -> AccessTokenPayload:
 	try:
 		raw: dict = jwt.decode(token, settings.JWT_SECRET_KEY, [ALGORITHM])
 	except jwt.ExpiredSignatureError:
-		raise DomainException(
-			status_code=HTTPStatus.UNAUTHORIZED,
+		raise AuthenticationError(
 			message="Token has expired",
-			error_code=ErrorCode.TOKEN_EXPIRED
 		)
 	except jwt.InvalidTokenError:
-		raise DomainException(
-			status_code=HTTPStatus.UNAUTHORIZED,
+		raise AuthenticationError(
 			message="Token is invalid",
-			error_code=ErrorCode.TOKEN_INVALID
 		)
 
 	return AccessTokenPayload(**raw)

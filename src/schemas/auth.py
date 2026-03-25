@@ -10,7 +10,7 @@ PASSWORD_REGEX = re.compile(
     r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
 )
 
-class AuthRequest(BaseSchema):
+class SignupRequest(BaseSchema):
 	email: EmailStr
 	password: str
 
@@ -21,6 +21,11 @@ class AuthRequest(BaseSchema):
 			raise ValueError("Password must contain uppercase, lowercase, digit, special character and be 8+ chars"
 			)
 		return passwd
+
+
+class LoginRequest(BaseSchema):
+	email: EmailStr
+	password: str
 
 
 class TokenResponse(BaseSchema):

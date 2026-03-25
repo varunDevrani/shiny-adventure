@@ -1,5 +1,5 @@
 from argon2 import PasswordHasher
-from argon2.exceptions import Argon2Error
+from argon2.exceptions import VerifyMismatchError
 
 
 passwordHasher = PasswordHasher()
@@ -14,6 +14,8 @@ def verify_password(hash_passwd: str, plain_passwd: str) -> bool:
 	try:
 		passwordHasher.verify(hash_passwd, plain_passwd)
 		return True
-	except Argon2Error:
+	except VerifyMismatchError:
 		return False
 
+
+DUMMY_HASH = hash_password("correct horse battery staple")
